@@ -173,7 +173,7 @@ Format with [Verse], [Chorus], [Bridge] sections.
 Keep it between ${MODEL_CONFIG.constraints.lyrics.min} and ${MODEL_CONFIG.constraints.lyrics.max} characters.
 Make it creative and rhyming.`
 
-    const output = await replicate.run("meta/llama-2-70b-chat", {
+    const output = await replicate.run("meta/meta-llama-3-8b-instruct", {
       input: {
         prompt: prompt,
         max_tokens: 800,

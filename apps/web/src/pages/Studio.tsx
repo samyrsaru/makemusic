@@ -115,7 +115,7 @@ function Studio() {
             to="/my-music" 
             className="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors text-sm font-medium"
           >
-            My Music
+            my library
           </Link>
           <span className="text-sm font-medium text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-3 py-1 rounded-full">
             {credits} credits

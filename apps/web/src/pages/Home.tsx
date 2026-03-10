@@ -71,6 +71,12 @@ function Home() {
                 {status.credits} credits
               </span>
             )}
+            <Link 
+              to="/account" 
+              className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+            >
+              Account
+            </Link>
             <UserButton />
           </Show>
           <Show when="signed-out">

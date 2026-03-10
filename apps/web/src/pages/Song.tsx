@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { UserButton, Show, useAuth } from '@clerk/react'
+import { Show, UserButton, useAuth } from '@clerk/react'
 import { Link, useParams, useNavigate } from 'react-router'
 import { ThemeToggle } from '../components/ThemeToggle.tsx'
 
@@ -124,9 +124,13 @@ function Song() {
           >
             Library
           </Link>
-          <Show when="signed-in">
-            <UserButton />
-          </Show>
+          <Link 
+            to="/account" 
+            className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+          >
+            Account
+          </Link>
+          <UserButton />
         </div>
       </nav>
 

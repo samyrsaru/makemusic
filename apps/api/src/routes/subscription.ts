@@ -141,6 +141,47 @@ app.post('/sync', async (c) => {
   }
 })
 
+// Create customer portal session
+app.post('/portal', async (c) => {
+  const auth = getAuth(c)
+  if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401)
+
+  try {
+    // Get user's email from request header
+    const email = c.req.header('x-user-email')
+    
+    if (!email) {
+      return c.json({ error: 'Email required' }, 400)
+    }
+
+    // Get customer by email
+    const customersResult = await polar.customers.list({
+      email: email,
+    })
+    
+    const customers: any[] = []
+    for await (const customer of customersResult) {
+      customers.push(customer)
+    }
+
+    if (!customers.length) {
+      return c.json({ error: 'No customer found' }, 404)
+    }
+
+    const customer = customers[0]
+    
+    // Create customer portal session
+    const portal = await polar.customerSessions.create({
+      customerId: customer.id,
+    })
+
+    return c.json({ portalUrl: portal.customerPortalUrl })
+  } catch (error: any) {
+    console.error('Portal error:', error)
+    return c.json({ error: 'Failed to create portal session', details: error.message }, 500)
+  }
+})
+
 // Test - manually add credits (dev only)
 app.post('/test-add-credits', async (c) => {
   if (process.env.NODE_ENV === 'production') {

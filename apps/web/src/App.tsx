@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Studio from './pages/Studio'
 import MyMusic from './pages/MyMusic'
 import Song from './pages/Song'
+import Account from './pages/Account'
 import NotFound from './pages/NotFound'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/studio" element={<Studio />} />
         <Route path="/library" element={<MyMusic />} />
         <Route path="/song/:id" element={<Song />} />
+        <Route path="/account" element={<Account />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

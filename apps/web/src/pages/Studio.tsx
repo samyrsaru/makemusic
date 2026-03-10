@@ -182,17 +182,17 @@ function Studio() {
       {/* Navigation */}
       <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center">
         <Link to="/" className="text-xl font-semibold tracking-tight">
-          <span className="text-orange-500">Make</span>Music
+          <span className="text-green-500">Make</span>Music
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Link 
             to="/my-music" 
-            className="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors text-sm font-medium"
+            className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
           >
             My Library
           </Link>
-          <span className="text-sm font-medium text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-3 py-1 rounded-full">
+          <span className="text-sm font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
             {credits} credits
           </span>
           <Show when="signed-in">
@@ -208,7 +208,7 @@ function Studio() {
             <p className="text-zinc-600 dark:text-zinc-400 mb-8">Please sign in to use the music generator</p>
             <Link
               to="/"
-              className="inline-block py-3 px-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-all"
+              className="inline-block py-3 px-6 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all"
             >
               Sign In
             </Link>
@@ -230,7 +230,7 @@ function Studio() {
                     value={songIdea}
                     onChange={(e) => setSongIdea(e.target.value)}
                     placeholder="e.g., A love song about summer nights, jazz style, romantic and dreamy..."
-                    className="w-full h-32 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none transition-all"
+                    className="w-full h-32 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none transition-all"
                   />
                 </div>
 
@@ -238,7 +238,7 @@ function Studio() {
                   <button
                     onClick={generateLyricsFromIdea}
                     disabled={!songIdea.trim() || isGeneratingLyrics || credits < 1}
-                    className="w-full py-4 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:shadow-none"
+                    className="w-full py-4 bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:shadow-none"
                   >
                     {isGeneratingLyrics ? (
                       <span className="flex items-center justify-center gap-2">
@@ -254,7 +254,7 @@ function Studio() {
 
                   <button
                     onClick={goToLyricsDirectly}
-                    className="text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400 text-sm font-medium transition-colors"
+                    className="text-zinc-500 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 text-sm font-medium transition-colors"
                   >
                     I already have lyrics →
                   </button>
@@ -276,7 +276,7 @@ function Studio() {
           {/* Loading State */}
           {step === 'generating' && (
             <div className="max-w-2xl mx-auto text-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-500 border-t-transparent mx-auto mb-6"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent mx-auto mb-6"></div>
               <h2 className="text-2xl font-bold mb-2">Creating your lyrics...</h2>
               <p className="text-zinc-600 dark:text-zinc-400">This will just take a moment</p>
             </div>
@@ -292,7 +292,7 @@ function Studio() {
                 </div>
                 <button
                   onClick={goBackToInput}
-                  className="text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400 text-sm font-medium transition-colors"
+                  className="text-zinc-500 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 text-sm font-medium transition-colors"
                 >
                   ← Start Over
                 </button>
@@ -315,7 +315,7 @@ function Studio() {
                   onChange={(e) => setLyrics(e.target.value)}
                   placeholder="Enter your lyrics here..."
                   disabled={isGenerating}
-                  className="w-full h-64 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
+                  className="w-full h-64 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
                 />
                 {constraints && (
                   <div className="flex justify-between mt-2">
@@ -342,7 +342,7 @@ function Studio() {
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Describe the style, mood, instruments..."
                   disabled={isGenerating}
-                  className="w-full h-24 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
+                  className="w-full h-24 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
                 />
                 {constraints && (
                   <div className="flex justify-between mt-2">
@@ -373,7 +373,7 @@ function Studio() {
                 <button
                   onClick={handleGenerate}
                   disabled={isGenerating || credits < 1 || !canGenerate}
-                  className="w-full max-w-md py-4 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:shadow-none"
+                  className="w-full max-w-md py-4 bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:shadow-none"
                 >
                   {isGenerating ? (
                     <span className="flex items-center justify-center gap-2">

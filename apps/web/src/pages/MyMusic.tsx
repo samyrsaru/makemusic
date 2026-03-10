@@ -76,13 +76,13 @@ function MyMusic() {
       {/* Navigation */}
       <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center">
         <Link to="/" className="text-xl font-semibold tracking-tight">
-          <span className="text-orange-500">Make</span>Music
+          <span className="text-green-500">Make</span>Music
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Link 
             to="/studio" 
-            className="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors text-sm font-medium"
+            className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
           >
             Studio
           </Link>
@@ -99,7 +99,7 @@ function MyMusic() {
             <p className="text-zinc-600 dark:text-zinc-400 mb-8">Please sign in to view your music library</p>
             <Link
               to="/"
-              className="inline-block py-3 px-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-all"
+              className="inline-block py-3 px-6 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all"
             >
               Sign In
             </Link>
@@ -122,7 +122,7 @@ function MyMusic() {
             {/* Loading */}
             {loading && (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-500 border-t-transparent mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-green-500 border-t-transparent mx-auto mb-4"></div>
                 <p className="text-zinc-500 dark:text-zinc-400">Loading your music...</p>
               </div>
             )}
@@ -139,7 +139,7 @@ function MyMusic() {
                 </p>
                 <Link
                   to="/studio"
-                  className="inline-block py-3 px-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-all"
+                  className="inline-block py-3 px-6 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all"
                 >
                   Go to Studio
                 </Link>
@@ -152,7 +152,7 @@ function MyMusic() {
                 {generations.map((gen) => (
                   <div 
                     key={gen.id}
-                    className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-orange-300 dark:hover:border-orange-700 transition-all shadow-sm hover:shadow-md"
+                    className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-green-300 dark:hover:border-green-700 transition-all shadow-sm hover:shadow-md"
                   >
                     <div className="p-6 space-y-4">
                       <div className="flex items-start justify-between gap-4">

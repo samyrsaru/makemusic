@@ -1,40 +1,44 @@
 import { useState, useEffect } from 'react'
 import { UserButton, Show, useAuth } from '@clerk/react'
 import { Link } from 'react-router'
+import { ThemeToggle } from '../components/ThemeToggle.tsx'
+
+const EXAMPLE_LYRICS = `[Verse]
+In the hush of night, we find our space,
+Wrapped in moonlight's gentle embrace.
+Your whisper's soft, like a velvet song,
+In this tender moment, where we both belong.
+
+[Chorus]
+Just you and me, in this lazy jazz,
+Our souls entwined, nothing else we ask.
+In this serenade, we sway and sigh,
+Lost in this love, beneath the starry sky.
+
+[Bridge]
+Your voice, a lullaby, soothes my soul,
+In this night, together, we feel whole.
+Each moment shared, a timeless flight,
+In this gentle jazz, we find our light.
+
+[Outro]
+As dawn approaches, and stars fade away,
+In your arms, I wish to forever stay.`
+
+const EXAMPLE_PROMPT = "Jazz, Smooth Jazz, Romantic, Dreamy"
 
 function Studio() {
   const { userId } = useAuth()
-  const [lyrics, setLyrics] = useState('')
-  const [prompt, setPrompt] = useState('')
+  const [lyrics, setLyrics] = useState(EXAMPLE_LYRICS)
+  const [prompt, setPrompt] = useState(EXAMPLE_PROMPT)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [generation, setGeneration] = useState<any>(null)
+  const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [credits, setCredits] = useState(0)
 
-  // Fetch credits on load
   useEffect(() => {
     if (userId) fetchStatus()
   }, [userId])
-
-  // Poll for generation status
-  useEffect(() => {
-    if (!generation?.id || generation.status === 'completed' || generation.status === 'failed') return
-
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/generations/${generation.id}`)
-        const data = await res.json()
-        setGeneration(data)
-        if (data.status === 'completed' || data.status === 'failed') {
-          clearInterval(interval)
-        }
-      } catch (err) {
-        console.error('Polling error:', err)
-      }
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [generation])
 
   const fetchStatus = async () => {
     try {
@@ -46,11 +50,35 @@ function Studio() {
     }
   }
 
+  const loadExample = () => {
+    setLyrics(EXAMPLE_LYRICS)
+    setPrompt(EXAMPLE_PROMPT)
+  }
+
+  const downloadAudio = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(blobUrl)
+    } catch (err) {
+      console.error('Download failed:', err)
+      window.open(url, '_blank')
+    }
+  }
+
   const handleGenerate = async () => {
     if (!lyrics.trim()) return
     
     setIsGenerating(true)
     setError('')
+    setAudioUrl(null)
     
     try {
       const res = await fetch('/api/generations/generate', {
@@ -64,7 +92,7 @@ function Studio() {
       if (data.error) {
         setError(data.error)
       } else {
-        setGeneration(data)
+        setAudioUrl(data.audioUrl)
         setCredits(data.creditsRemaining)
       }
     } catch (err: any) {
@@ -75,14 +103,21 @@ function Studio() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
       {/* Navigation */}
-      <nav className="p-4 flex justify-between items-center">
-        <Link to="/" className="text-white text-xl font-bold">
-          MakeMusic
+      <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center">
+        <Link to="/" className="text-xl font-semibold tracking-tight">
+          <span className="text-orange-500">Make</span>Music
         </Link>
         <div className="flex items-center gap-4">
-          <span className="text-white font-semibold bg-white/20 px-3 py-1 rounded-full">
+          <ThemeToggle />
+          <Link 
+            to="/my-music" 
+            className="text-zinc-600 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors text-sm font-medium"
+          >
+            My Music
+          </Link>
+          <span className="text-sm font-medium text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-3 py-1 rounded-full">
             {credits} credits
           </span>
           <Show when="signed-in">
@@ -91,113 +126,130 @@ function Studio() {
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-6 py-12">
         <Show when="signed-out">
           <div className="text-center py-20">
-            <h1 className="text-4xl font-bold text-white mb-4">Studio</h1>
-            <p className="text-white/80 mb-8">Please sign in to use the music generator</p>
+            <h1 className="text-4xl font-bold mb-4">Studio</h1>
+            <p className="text-zinc-600 dark:text-zinc-400 mb-8">Please sign in to use the music generator</p>
+            <Link
+              to="/"
+              className="inline-block py-3 px-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-all"
+            >
+              Sign In
+            </Link>
           </div>
         </Show>
 
         <Show when="signed-in">
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-white mb-2">Studio</h1>
-              <p className="text-white/80">Generate music with AI</p>
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Studio</h1>
+              <p className="text-zinc-600 dark:text-zinc-400">Write your lyrics and choose a style to generate music</p>
             </div>
 
             {/* Lyrics Input */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <label htmlFor="lyrics" className="block text-white font-semibold mb-2">
-                Lyrics
-              </label>
+            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <label htmlFor="lyrics" className="block font-semibold text-lg">
+                  Lyrics
+                </label>
+                <button
+                  onClick={loadExample}
+                  disabled={isGenerating}
+                  className="text-sm text-orange-500 hover:text-orange-600 disabled:opacity-50 font-medium"
+                >
+                  Reset to Example
+                </button>
+              </div>
               <textarea
                 id="lyrics"
                 value={lyrics}
                 onChange={(e) => setLyrics(e.target.value)}
                 placeholder="Enter your lyrics here..."
                 disabled={isGenerating}
-                className="w-full h-48 px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none disabled:opacity-50"
+                className="w-full h-56 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
               />
             </div>
 
             {/* Prompt Input */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-              <label htmlFor="prompt" className="block text-white font-semibold mb-2">
-                Style Prompt
+            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
+              <label htmlFor="prompt" className="block font-semibold text-lg mb-4">
+                Style
               </label>
               <textarea
                 id="prompt"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Describe the style, mood, instruments, tempo... (e.g., upbeat pop with electronic beats, dreamy synths, 120 BPM)"
+                placeholder="Describe the style, mood, instruments..."
                 disabled={isGenerating}
-                className="w-full h-24 px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none disabled:opacity-50"
+                className="w-full h-24 px-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
               />
+              <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">
+                Examples: Jazz, Pop, Electronic, Rock, Classical, Lo-fi, Upbeat, Melancholic
+              </p>
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-red-200">
+              <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl p-4 text-red-600 dark:text-red-400">
                 {error}
               </div>
             )}
 
             {/* Generate Button */}
-            <div className="flex justify-center pt-4">
+            <div className="flex flex-col items-center gap-4">
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating || !lyrics.trim() || credits < 1}
-                className="px-12 py-4 bg-white text-purple-600 font-bold text-lg rounded-full shadow-lg hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105"
+                className="w-full max-w-md py-4 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:shadow-none"
               >
-                {isGenerating ? 'Starting...' : credits < 1 ? 'No Credits' : 'Generate Music'}
+                {isGenerating ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                    Generating...
+                  </span>
+                ) : credits < 1 ? (
+                  'No Credits - Subscribe to Generate'
+                ) : (
+                  'Generate Music (1 credit)'
+                )}
               </button>
+              <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                {credits} credits remaining
+              </p>
             </div>
 
-            {/* Credits indicator */}
-            <div className="text-center text-white/60 text-sm">
-              Each generation costs 1 credit • You have {credits} credits
-            </div>
-
-            {/* Generation Status */}
-            {generation && (
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mt-8">
-                <h3 className="text-white font-semibold mb-4">Generation Status</h3>
-                
-                {generation.status === 'pending' && (
-                  <div className="flex items-center gap-3 text-white/80">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Generating your music... (This may take 30-60 seconds)</span>
+            {/* Result */}
+            {audioUrl && (
+              <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 shadow-lg">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">🎉</span>
                   </div>
-                )}
-                
-                {generation.status === 'completed' && generation.audioUrl && (
-                  <div className="space-y-4">
-                    <div className="text-green-300 font-medium">✅ Generation complete!</div>
-                    <audio controls className="w-full">
-                      <source src={generation.audioUrl} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
-                    <a 
-                      href={generation.audioUrl} 
-                      download 
-                      className="inline-block px-6 py-2 bg-white text-purple-600 font-semibold rounded-lg hover:bg-white/90 transition-all"
-                    >
-                      Download MP3
-                    </a>
+                  <div>
+                    <h3 className="font-semibold text-lg">Your music is ready!</h3>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-500">Listen and download below</p>
                   </div>
-                )}
+                </div>
                 
-                {generation.status === 'failed' && (
-                  <div className="text-red-300">
-                    ❌ Generation failed. Your credit has been refunded.
-                  </div>
-                )}
+                <div className="space-y-4">
+                  <audio 
+                    controls 
+                    src={audioUrl}
+                    className="w-full h-14 rounded-xl"
+                  />
+                  <button 
+                    onClick={() => downloadAudio(audioUrl, 'makemusic-generation.mp3')}
+                    className="w-full py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-semibold rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all"
+                  >
+                    Download MP3
+                  </button>
+                </div>
               </div>
             )}
           </div>
         </Show>
-      </div>
+      </main>
     </div>
   )
 }

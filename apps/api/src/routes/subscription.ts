@@ -1,0 +1,180 @@
+import { Hono } from 'hono'
+import { getAuth } from '@hono/clerk-auth'
+import { Polar } from '@polar-sh/sdk'
+import db from '../lib/db.js'
+
+const polar = new Polar({
+  accessToken: process.env.POLAR_ACCESS_TOKEN!,
+  server: (process.env.POLAR_ENV as 'sandbox' | 'production') || 'sandbox',
+})
+
+const POLAR_PRODUCT_ID = process.env.POLAR_PRODUCT_ID!
+
+const app = new Hono()
+
+// Create checkout
+app.post('/checkout', async (c) => {
+  const auth = getAuth(c)
+  if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401)
+
+  if (!POLAR_PRODUCT_ID) {
+    return c.json({ error: 'Product ID not configured' }, 500)
+  }
+
+  try {
+    const checkout = await polar.checkouts.create({
+      products: [POLAR_PRODUCT_ID],
+      successUrl: `${process.env.WEB_URL}/?checkout_id={CHECKOUT_ID}`,
+      metadata: { clerkUserId: auth.userId },
+    })
+
+    return c.json({ checkoutUrl: checkout.url })
+  } catch (error: any) {
+    console.error('Polar checkout error:', error)
+    return c.json({ error: 'Failed to create checkout', details: error.message }, 500)
+  }
+})
+
+// Get status
+app.get('/status', (c) => {
+  const auth = getAuth(c)
+  if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401)
+
+  const user = db.prepare('SELECT * FROM users WHERE clerkUserId = ?')
+    .get(auth.userId) as any
+
+  if (!user) {
+    return c.json({ subscribed: false, credits: 0 })
+  }
+
+  return c.json({
+    subscribed: user.status === 'active',
+    credits: user.credits,
+    currentPeriodEnd: user.currentPeriodEnd,
+  })
+})
+
+// Get my user ID (for debugging)
+app.get('/me', (c) => {
+  const auth = getAuth(c)
+  if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401)
+  
+  return c.json({ 
+    clerkUserId: auth.userId,
+    sessionClaims: auth.sessionClaims 
+  })
+})
+
+// Manual sync - checks Polar for subscription and updates credits
+app.post('/sync', async (c) => {
+  const auth = getAuth(c)
+  if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401)
+
+  try {
+    // Get user's email from request header (set by frontend)
+    const email = c.req.header('x-user-email')
+    
+    if (!email) {
+      return c.json({ error: 'Email required' }, 400)
+    }
+
+    // Get customer by email
+    const customersResult = await polar.customers.list({
+      email: email,
+    })
+    
+    // Get all customers from iterator
+    const customers: any[] = []
+    for await (const customer of customersResult) {
+      customers.push(customer)
+    }
+
+    if (!customers.length) {
+      return c.json({ error: 'No customer found' }, 404)
+    }
+
+    const customer = customers[0]
+    
+    // Get subscriptions for this customer
+    const subsResult = await polar.subscriptions.list({
+      customerId: customer.id,
+    })
+    
+    // Get all subscriptions from iterator
+    const subscriptions: any[] = []
+    for await (const sub of subsResult) {
+      subscriptions.push(sub)
+    }
+
+    const activeSub = subscriptions.find((s: any) => s.status === 'active')
+
+    if (!activeSub) {
+      return c.json({ error: 'No active subscription found' }, 404)
+    }
+
+    // Update or create user with credits
+    db.prepare(`
+      INSERT INTO users (clerkUserId, credits, polarSubscriptionId, status, currentPeriodStart, currentPeriodEnd)
+      VALUES (?, 100, ?, ?, ?, ?)
+      ON CONFLICT(clerkUserId) DO UPDATE SET
+        credits = CASE WHEN excluded.status = 'active' AND users.status != 'active' THEN 100 ELSE users.credits END,
+        polarSubscriptionId = excluded.polarSubscriptionId,
+        status = excluded.status,
+        currentPeriodStart = excluded.currentPeriodStart,
+        currentPeriodEnd = excluded.currentPeriodEnd
+    `).run(
+      auth.userId,
+      activeSub.id,
+      activeSub.status,
+      activeSub.currentPeriodStart,
+      activeSub.currentPeriodEnd
+    )
+
+    return c.json({ 
+      success: true, 
+      message: 'Credits synced',
+      credits: 100 
+    })
+  } catch (error: any) {
+    console.error('Sync error:', error)
+    return c.json({ error: 'Sync failed', details: error.message }, 500)
+  }
+})
+
+// Test - manually add credits (dev only)
+app.post('/test-add-credits', async (c) => {
+  if (process.env.NODE_ENV === 'production') {
+    return c.json({ error: 'Not available in production' }, 403)
+  }
+
+  try {
+    const { clerkUserId, credits = 100 } = await c.req.json()
+    
+    if (!clerkUserId) {
+      return c.json({ error: 'clerkUserId required' }, 400)
+    }
+
+    // Insert or update user with credits
+    db.prepare(`
+      INSERT INTO users (clerkUserId, credits, polarSubscriptionId, status, currentPeriodStart, currentPeriodEnd)
+      VALUES (?, ?, 'manual_test', 'active', datetime('now'), datetime('now', '+1 month'))
+      ON CONFLICT(clerkUserId) DO UPDATE SET
+        credits = credits + ?,
+        status = 'active'
+    `).run(clerkUserId, credits, credits)
+
+    // Get updated user
+    const user = db.prepare('SELECT * FROM users WHERE clerkUserId = ?').get(clerkUserId)
+
+    return c.json({ 
+      success: true, 
+      message: `Added ${credits} credits`,
+      user
+    })
+  } catch (error: any) {
+    console.error('Add credits error:', error)
+    return c.json({ error: 'Failed to add credits', details: error.message }, 500)
+  }
+})
+
+export default app

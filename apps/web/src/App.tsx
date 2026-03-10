@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 import Home from './pages/Home'
 import Studio from './pages/Studio'
 import MyMusic from './pages/MyMusic'
+import Song from './pages/Song'
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
@@ -9,7 +11,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/studio" element={<Studio />} />
-        <Route path="/my-music" element={<MyMusic />} />
+        <Route path="/library" element={<MyMusic />} />
+        <Route path="/song/:id" element={<Song />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

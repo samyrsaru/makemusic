@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { UserButton, Show, useAuth } from '@clerk/react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { ThemeToggle } from '../components/ThemeToggle.tsx'
 
 const EXAMPLE_LYRICS = `[Verse]
@@ -34,6 +34,7 @@ interface ModelConstraints {
 
 function Studio() {
   const { userId, isLoaded } = useAuth()
+  const [searchParams] = useSearchParams()
   const [step, setStep] = useState<'input' | 'lyrics' | 'generating'>('input')
   const [songIdea, setSongIdea] = useState('')
   const [lyrics, setLyrics] = useState(EXAMPLE_LYRICS)
@@ -44,6 +45,20 @@ function Studio() {
   const [error, setError] = useState('')
   const [credits, setCredits] = useState(0)
   const [constraints, setConstraints] = useState<ModelConstraints | null>(null)
+
+  // Check for pre-filled lyrics and style from URL params
+  useEffect(() => {
+    const prefillLyrics = searchParams.get('lyrics')
+    const prefillStyle = searchParams.get('style')
+    
+    if (prefillLyrics) {
+      setLyrics(prefillLyrics)
+      setStep('lyrics')
+    }
+    if (prefillStyle) {
+      setPrompt(prefillStyle)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     if (isLoaded && userId) {
@@ -190,10 +205,10 @@ function Studio() {
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Link 
-            to="/my-music" 
+            to="/library" 
             className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
           >
-            My Library
+            Library
           </Link>
           <span className="text-sm font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
             {credits} credits

@@ -61,10 +61,10 @@ function Home() {
               Studio
             </Link>
             <Link 
-              to="/my-music" 
+              to="/library" 
               className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
             >
-              My Library
+              Library
             </Link>
             {status?.subscribed && (
               <span className="text-sm font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">

@@ -91,11 +91,6 @@ function MyMusic() {
     })
   }
 
-  const truncateLyrics = (lyrics: string, maxLength: number = 120) => {
-    if (lyrics.length <= maxLength) return lyrics
-    return lyrics.substring(0, maxLength) + '...'
-  }
-
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
       {/* Navigation */}
@@ -120,7 +115,7 @@ function MyMusic() {
       <main className="max-w-6xl mx-auto px-6 py-12">
         <Show when="signed-out">
           <div className="text-center py-20">
-            <h1 className="text-4xl font-bold mb-4">My Library</h1>
+            <h1 className="text-4xl font-bold mb-4">Library</h1>
             <p className="text-zinc-600 dark:text-zinc-400 mb-8">Please sign in to view your music library</p>
             <Link
               to="/"
@@ -134,7 +129,7 @@ function MyMusic() {
         <Show when="signed-in">
           <div>
             <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">My Library</h1>
+              <h1 className="text-3xl font-bold mb-2">Library</h1>
             </div>
 
             {/* Error Message */}
@@ -179,7 +174,7 @@ function MyMusic() {
                     key={gen.id}
                     className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:border-green-300 dark:hover:border-green-700 transition-all shadow-sm hover:shadow-md"
                   >
-                    <div className="p-6 space-y-4">
+                    <Link to={`/song/${gen.id}`} className="block p-6 space-y-4">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-zinc-500 dark:text-zinc-500 uppercase tracking-wide mb-1">
@@ -190,7 +185,11 @@ function MyMusic() {
                           </h3>
                         </div>
                         <button
-                          onClick={() => setDeleteConfirm(gen.id)}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setDeleteConfirm(gen.id)
+                          }}
                           className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-all"
                           title="Delete track"
                         >
@@ -200,25 +199,29 @@ function MyMusic() {
                         </button>
                       </div>
 
-                      <div className="bg-zinc-50 dark:bg-zinc-950 rounded-lg p-4 border border-zinc-100 dark:border-zinc-800">
-                        <p className="text-zinc-600 dark:text-zinc-400 text-sm italic leading-relaxed">
-                          "{truncateLyrics(gen.lyrics)}"
-                        </p>
-                      </div>
-
                       <audio
                         controls
                         src={gen.audioUrl}
                         className="w-full h-14 rounded-xl"
+                        onClick={(e) => e.stopPropagation()}
                       />
 
-                      <button
-                        onClick={() => downloadAudio(gen.audioUrl, `makemusic-${gen.id}.mp3`)}
-                        className="w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
-                      >
-                        Download
-                      </button>
-                    </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            downloadAudio(gen.audioUrl, `makemusic-${gen.id}.mp3`)
+                          }}
+                          className="flex-1 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
+                        >
+                          Download
+                        </button>
+                        <span className="flex-1 py-2.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-medium rounded-lg text-center">
+                          View Details →
+                        </span>
+                      </div>
+                    </Link>
                   </div>
                 ))}
               </div>

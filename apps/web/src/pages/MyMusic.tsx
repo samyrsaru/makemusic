@@ -95,7 +95,7 @@ function MyMusic() {
       <main className="max-w-6xl mx-auto px-6 py-12">
         <Show when="signed-out">
           <div className="text-center py-20">
-            <h1 className="text-4xl font-bold mb-4">my library</h1>
+            <h1 className="text-4xl font-bold mb-4">My Library</h1>
             <p className="text-zinc-600 dark:text-zinc-400 mb-8">Please sign in to view your music library</p>
             <Link
               to="/"
@@ -109,7 +109,7 @@ function MyMusic() {
         <Show when="signed-in">
           <div>
             <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">my library</h1>
+              <h1 className="text-3xl font-bold mb-2">My Library</h1>
             </div>
 
             {/* Error Message */}
@@ -182,7 +182,7 @@ function MyMusic() {
                         onClick={() => downloadAudio(gen.audioUrl, `makemusic-${gen.id}.mp3`)}
                         className="w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
                       >
-                        download
+                        Download
                       </button>
                     </div>
                   </div>

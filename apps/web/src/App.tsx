@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
+import { Layout } from './components/Layout'
 import Home from './pages/Home'
 import Studio from './pages/Studio'
 import MyMusic from './pages/MyMusic'
@@ -11,10 +12,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/studio" element={<Studio />} />
-        <Route path="/library" element={<MyMusic />} />
-        <Route path="/song/:id" element={<Song />} />
-        <Route path="/account" element={<Account />} />
+        <Route element={<Layout />}>
+          <Route path="/studio" element={<Studio />} />
+          <Route path="/library" element={<MyMusic />} />
+          <Route path="/song/:id" element={<Song />} />
+          <Route path="/account" element={<Account />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Show, UserButton, useAuth } from '@clerk/react'
+import { Show, useAuth } from '@clerk/react'
 import { Link, useSearchParams } from 'react-router'
-import { ThemeToggle } from '../components/ThemeToggle.tsx'
 
 const EXAMPLE_LYRICS = `[Verse]
 In the hush of night, we find our space,
@@ -197,32 +196,6 @@ function Studio() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
-      {/* Navigation */}
-      <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-semibold tracking-tight">
-          <span className="text-green-500">Make</span>Music
-        </Link>
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <Link 
-            to="/library" 
-            className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
-          >
-            Library
-          </Link>
-          <span className="text-sm font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
-            {credits} credits
-          </span>
-          <Link 
-            to="/account" 
-            className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
-          >
-            Account
-          </Link>
-          <UserButton />
-        </div>
-      </nav>
-
       <main className="max-w-4xl mx-auto px-6 py-12">
         <Show when="signed-out">
           <div className="text-center py-20">

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Show, UserButton, useAuth } from '@clerk/react'
+import { Show, useAuth } from '@clerk/react'
 import { Link } from 'react-router'
-import { ThemeToggle } from '../components/ThemeToggle.tsx'
 
 interface Generation {
   id: string
@@ -93,29 +92,6 @@ function MyMusic() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
-      {/* Navigation */}
-      <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-semibold tracking-tight">
-          <span className="text-green-500">Make</span>Music
-        </Link>
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <Link 
-            to="/studio" 
-            className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
-          >
-            Studio
-          </Link>
-          <Link 
-            to="/account" 
-            className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
-          >
-            Account
-          </Link>
-          <UserButton />
-        </div>
-      </nav>
-
       <main className="max-w-6xl mx-auto px-6 py-12">
         <Show when="signed-out">
           <div className="text-center py-20">

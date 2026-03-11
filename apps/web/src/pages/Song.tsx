@@ -210,16 +210,14 @@ function Song() {
                 </div>
               ) : (
                 <>
-                  <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 shadow-sm">
-                    <audio
-                      controls
-                      src={generation.audioUrl}
-                      className="w-full h-16 rounded-xl"
-                      ref={(el) => {
-                        if (el) registerAudioElement(el)
-                      }}
-                    />
-                  </div>
+                  <audio
+                    controls
+                    src={generation.audioUrl}
+                    className="w-full h-16 rounded-xl"
+                    ref={(el) => {
+                      if (el) registerAudioElement(el)
+                    }}
+                  />
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-4">

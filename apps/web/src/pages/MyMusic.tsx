@@ -229,13 +229,10 @@ function MyMusic() {
                                 e.stopPropagation()
                                 downloadAudio(gen.audioUrl, `makemusic-${gen.id}.mp3`)
                               }}
-                              className="flex-1 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
+                              className="w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
                             >
                               Download
                             </button>
-                            <span className="flex-1 py-2.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-medium rounded-lg text-center">
-                              View Details →
-                            </span>
                           </div>
                         </>
                       )}

@@ -22,9 +22,3 @@ VITE_API_URL = "https://api-dev.music.likeahe.ro"
 VITE_CLERK_PUBLISHABLE_KEY = "pk_live_YOUR_KEY"
 VITE_API_URL = "https://api.music.likeahe.ro"
 
-# Exclude assets from SPA handling
-[[routes]]
-pattern = "music.likeahe.ro/assets/*"
-[[routes]]
-pattern = "music.likeahe.ro"
-custom_domain = true

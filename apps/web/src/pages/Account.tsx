@@ -62,9 +62,9 @@ function Account() {
     setManagingSubscription(true)
     try {
       const email = user?.primaryEmailAddress?.emailAddress
-      const res = await fetch(`${API_URL}/api/subscription/portal`, {
+      const res = await fetchWithAuth(`${API_URL}/api/subscription/portal`, {
         method: 'POST',
-        headers: email ? { 'x-user-email': email } : undefined
+        headers: email ? { 'x-user-email': email } : {}
       })
       const { portalUrl, error } = await res.json()
       if (error) {

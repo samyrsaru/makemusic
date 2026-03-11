@@ -82,8 +82,10 @@ function Account() {
   const startCheckout = async () => {
     setStartingCheckout(true)
     try {
+      const email = user?.primaryEmailAddress?.emailAddress
       const res = await fetchWithAuth(`${API_URL}/api/subscription/checkout`, {
-        method: 'POST'
+        method: 'POST',
+        headers: email ? { 'x-user-email': email } : {}
       })
       const { checkoutUrl, error } = await res.json()
       if (error) {

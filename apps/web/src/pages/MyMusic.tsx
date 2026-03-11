@@ -8,6 +8,7 @@ interface Generation {
   lyrics: string
   prompt: string
   audioUrl: string
+  status: 'pending' | 'completed' | 'failed'
   createdAt: string
 }
 
@@ -183,28 +184,49 @@ function MyMusic() {
                         </button>
                       </div>
 
-                      <audio
-                        controls
-                        src={gen.audioUrl}
-                        className="w-full h-14 rounded-xl"
-                        onClick={(e) => e.stopPropagation()}
-                      />
+                      {gen.status === 'pending' ? (
+                        <div className="flex flex-col items-center gap-3 py-4">
+                          <div className="relative">
+                            <div className="animate-spin rounded-full h-12 w-12 border-4 border-zinc-200 dark:border-zinc-700 border-t-green-500"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-lg">🎵</span>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Creating your music...</p>
+                            <div className="flex gap-1 justify-center mt-2">
+                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <audio
+                            controls
+                            src={gen.audioUrl}
+                            className="w-full h-14 rounded-xl"
+                            onClick={(e) => e.stopPropagation()}
+                          />
 
-                      <div className="flex gap-3">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            downloadAudio(gen.audioUrl, `makemusic-${gen.id}.mp3`)
-                          }}
-                          className="flex-1 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
-                        >
-                          Download
-                        </button>
-                        <span className="flex-1 py-2.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-medium rounded-lg text-center">
-                          View Details →
-                        </span>
-                      </div>
+                          <div className="flex gap-3">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                downloadAudio(gen.audioUrl, `makemusic-${gen.id}.mp3`)
+                              }}
+                              className="flex-1 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
+                            >
+                              Download
+                            </button>
+                            <span className="flex-1 py-2.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-medium rounded-lg text-center">
+                              View Details →
+                            </span>
+                          </div>
+                        </>
+                      )}
                     </Link>
                   </div>
                 ))}

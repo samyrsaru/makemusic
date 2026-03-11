@@ -440,7 +440,7 @@ app.get('/', async (c) => {
   if (!auth?.userId) return c.json({ error: 'Unauthorized' }, 401)
 
   const generations = db.prepare(`
-    SELECT id, lyrics, prompt, audioUrl, r2Key, createdAt 
+    SELECT id, lyrics, prompt, audioUrl, r2Key, status, createdAt 
     FROM generations 
     WHERE clerkUserId = ? 
     ORDER BY createdAt DESC

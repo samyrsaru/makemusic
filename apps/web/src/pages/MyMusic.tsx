@@ -10,6 +10,8 @@ interface Generation {
   createdAt: string
 }
 
+const API_URL = import.meta.env.VITE_API_URL || ''
+
 function MyMusic() {
   const { userId, isLoaded } = useAuth()
   const [generations, setGenerations] = useState<Generation[]>([])
@@ -24,7 +26,7 @@ function MyMusic() {
 
   const fetchGenerations = async () => {
     try {
-      const res = await fetch('/api/generations')
+      const res = await fetch(`${API_URL}/api/generations`)
       const data = await res.json()
       
       if (data.error) {
@@ -42,7 +44,7 @@ function MyMusic() {
   const deleteGeneration = async (id: string) => {
     setDeleting(id)
     try {
-      const res = await fetch(`/api/generations/${id}`, {
+      const res = await fetch(`${API_URL}/api/generations/${id}`, {
         method: 'DELETE',
       })
       

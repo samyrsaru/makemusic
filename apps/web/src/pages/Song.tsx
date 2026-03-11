@@ -11,6 +11,8 @@ interface Generation {
   createdAt: string
 }
 
+const API_URL = import.meta.env.VITE_API_URL || ''
+
 function Song() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -27,7 +29,7 @@ function Song() {
 
   const fetchGeneration = async () => {
     try {
-      const res = await fetch(`/api/generations/${id}`)
+      const res = await fetch(`${API_URL}/api/generations/${id}`)
       const data = await res.json()
       
       if (data.error) {
@@ -84,7 +86,7 @@ function Song() {
     
     setDeleting(true)
     try {
-      const res = await fetch(`/api/generations/${id}`, {
+      const res = await fetch(`${API_URL}/api/generations/${id}`, {
         method: 'DELETE',
       })
       

@@ -9,6 +9,8 @@ interface SubscriptionStatus {
   cancelAtPeriodEnd?: boolean
 }
 
+const API_URL = import.meta.env.VITE_API_URL || ''
+
 function Account() {
   const { userId, isLoaded } = useAuth()
   const { user } = useUser()
@@ -31,7 +33,7 @@ function Account() {
     if (!email) return
     
     try {
-      await fetch('/api/subscription/update-email', {
+      await fetch(`${API_URL}/api/subscription/update-email`, {
         method: 'POST',
         headers: { 'x-user-email': email }
       })
@@ -44,7 +46,7 @@ function Account() {
   const fetchStatus = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/subscription/status')
+      const res = await fetch(`${API_URL}/api/subscription/status`)
       const data = await res.json()
       setStatus(data)
     } catch (err) {
@@ -58,7 +60,7 @@ function Account() {
     setManagingSubscription(true)
     try {
       const email = user?.primaryEmailAddress?.emailAddress
-      const res = await fetch('/api/subscription/portal', {
+      const res = await fetch(`${API_URL}/api/subscription/portal`, {
         method: 'POST',
         headers: email ? { 'x-user-email': email } : undefined
       })
@@ -79,7 +81,7 @@ function Account() {
     setStartingCheckout(true)
     try {
       const email = user?.primaryEmailAddress?.emailAddress
-      const res = await fetch('/api/subscription/checkout', {
+      const res = await fetch(`${API_URL}/api/subscription/checkout`, {
         method: 'POST',
         headers: email ? { 'x-user-email': email } : undefined
       })

@@ -26,6 +26,8 @@ In your arms, I wish to forever stay.`
 
 const EXAMPLE_PROMPT = "Jazz, Smooth Jazz, Romantic, Dreamy"
 
+const API_URL = import.meta.env.VITE_API_URL || ''
+
 interface ModelConstraints {
   lyrics: { min: number; max: number }
   prompt: { min: number; max: number }
@@ -68,7 +70,7 @@ function Studio() {
 
   const fetchStatus = async () => {
     try {
-      const res = await fetch('/api/subscription/status')
+      const res = await fetch(`${API_URL}/api/subscription/status`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setCredits(data.credits)
@@ -79,7 +81,7 @@ function Studio() {
 
   const fetchConstraints = async () => {
     try {
-      const res = await fetch('/api/generations/config')
+      const res = await fetch(`${API_URL}/api/generations/config`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setConstraints(data.constraints)
@@ -94,7 +96,7 @@ function Studio() {
     setIsGeneratingLyrics(true)
     setStep('generating')
     try {
-      const res = await fetch('/api/generations/lyrics', {
+      const res = await fetch(`${API_URL}/api/generations/lyrics`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -158,7 +160,7 @@ function Studio() {
     setAudioUrl(null)
     
     try {
-      const res = await fetch('/api/generations/generate', {
+      const res = await fetch(`${API_URL}/api/generations/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

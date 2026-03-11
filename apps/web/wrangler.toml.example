@@ -1,0 +1,24 @@
+# Cloudflare Workers deployment config for Music (likeahe.ro)
+# Place this in apps/web/wrangler.toml
+
+name = "music"
+compatibility_date = "2026-03-11"
+
+[assets]
+directory = "./dist/"
+not_found_handling = "single-page-application"
+
+# Development environment
+[env.dev.vars]
+VITE_CLERK_PUBLISHABLE_KEY = ""
+VITE_API_URL = ""
+
+# Production environment  
+[env.production.vars]
+VITE_CLERK_PUBLISHABLE_KEY = ""
+VITE_API_URL = "https://api.music.likeahe.ro"
+
+# Routes configuration
+[[routes]]
+pattern = "music.likeahe.ro"
+custom_domain = true

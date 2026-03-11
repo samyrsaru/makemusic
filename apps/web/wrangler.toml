@@ -1,0 +1,28 @@
+# Cloudflare Workers Static Assets configuration for Music (likeahe.ro)
+# 
+# Deployment:
+#   npx wrangler deploy
+#
+# Docs: https://developers.cloudflare.com/workers/static-assets/
+
+name = "music"
+compatibility_date = "2026-03-11"
+
+[assets]
+directory = "./dist/"
+not_found_handling = "single-page-application"
+
+# Development environment variables
+[env.dev.vars]
+VITE_CLERK_PUBLISHABLE_KEY = "pk_test_YOUR_KEY"
+VITE_API_URL = "https://api-dev.music.likeahe.ro"
+
+# Production environment variables
+[env.production.vars]
+VITE_CLERK_PUBLISHABLE_KEY = "pk_live_YOUR_KEY"
+VITE_API_URL = "https://api.music.likeahe.ro"
+
+# Custom domains
+[[routes]]
+pattern = "music.likeahe.ro"
+custom_domain = true

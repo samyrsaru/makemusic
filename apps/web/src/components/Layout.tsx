@@ -22,19 +22,19 @@ export function Header() {
             <>
               <Link
                 to="/studio"
-                className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-semibold"
               >
                 Studio
               </Link>
               <Link
                 to="/library"
-                className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-semibold"
               >
                 Library
               </Link>
               <Link
                 to="/account"
-                className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+                className="text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-semibold"
               >
                 Account
               </Link>
@@ -77,21 +77,21 @@ export function Header() {
           <Link
             to="/studio"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+            className="block text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-semibold"
           >
             Studio
           </Link>
           <Link
             to="/library"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+            className="block text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-semibold"
           >
             Library
           </Link>
           <Link
             to="/account"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-medium"
+            className="block text-zinc-600 dark:text-zinc-400 hover:text-green-500 dark:hover:text-green-400 transition-colors text-sm font-semibold"
           >
             Account
           </Link>

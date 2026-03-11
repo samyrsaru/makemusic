@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Show, useAuth } from '@clerk/react'
 import { Link, useSearchParams } from 'react-router'
+import { registerAudioElement } from '../lib/audioManager.ts'
 import { useApi } from '../hooks/useApi'
 
 const EXAMPLE_LYRICS = `[Verse]
@@ -499,6 +500,9 @@ function Studio() {
                       controls 
                       src={audioUrl}
                       className="w-full h-14 rounded-xl"
+                      ref={(el) => {
+                        if (el) registerAudioElement(el)
+                      }}
                     />
                     <button 
                       onClick={() => downloadAudio(audioUrl, 'makemusic-generation.mp3')}

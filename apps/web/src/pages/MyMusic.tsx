@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Show, useAuth } from '@clerk/react'
 import { Link } from 'react-router'
+import { registerAudioElement } from '../lib/audioManager.ts'
 import { useApi } from '../hooks/useApi'
 
 interface Generation {
@@ -221,6 +222,9 @@ function MyMusic() {
                             src={gen.audioUrl}
                             className="w-full h-14 rounded-xl"
                             onClick={(e) => e.stopPropagation()}
+                            ref={(el) => {
+                              if (el) registerAudioElement(el)
+                            }}
                           />
 
                           <div className="flex gap-3">

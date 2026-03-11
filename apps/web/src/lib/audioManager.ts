@@ -2,7 +2,7 @@
 let currentlyPlaying: HTMLAudioElement | null = null
 
 export function registerAudioElement(audioElement: HTMLAudioElement) {
-  // When this audio starts playing, pause any other playing audio
+  // When this audio starts playing, pause any other played audio
   const handlePlay = () => {
     if (currentlyPlaying && currentlyPlaying !== audioElement) {
       currentlyPlaying.pause()

@@ -43,6 +43,12 @@ function Home() {
           </div>
         </div>
       </main>
+
+      <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-500">
+        <Link to="/privacy" className="hover:text-green-500 dark:hover:text-green-400 transition-colors">
+          Privacy Policy
+        </Link>
+      </footer>
     </div>
   )
 }

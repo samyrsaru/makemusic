@@ -30,9 +30,13 @@ const EXAMPLE_PROMPT = "Jazz, Smooth Jazz, Romantic, Dreamy"
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
-interface ModelConstraints {
-  lyrics: { min: number; max: number }
-  prompt: { min: number; max: number }
+interface ModelConfig {
+  id: string
+  cost: number
+  constraints: {
+    lyrics: { min: number; max: number }
+    prompt: { min: number; max: number }
+  }
 }
 
 function Studio() {
@@ -48,7 +52,7 @@ function Studio() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [credits, setCredits] = useState(0)
-  const [constraints, setConstraints] = useState<ModelConstraints | null>(null)
+  const [modelConfig, setModelConfig] = useState<ModelConfig | null>(null)
   const [generationId, setGenerationId] = useState<string | null>(null)
   const [generationStatus, setGenerationStatus] = useState<'idle' | 'pending' | 'completed' | 'failed'>('idle')
 
@@ -89,7 +93,7 @@ function Studio() {
       const res = await fetch(`${API_URL}/api/generations/config`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
-      setConstraints(data.constraints)
+      setModelConfig(data)
     } catch (err) {
       console.error('Failed to fetch constraints:', err)
     }
@@ -238,9 +242,10 @@ function Studio() {
     }
   }
 
-  const lyricsValid = !constraints || (lyrics.length >= constraints.lyrics.min && lyrics.length <= constraints.lyrics.max)
-  const promptValid = !constraints || (prompt.length >= constraints.prompt.min && prompt.length <= constraints.prompt.max)
+  const lyricsValid = !modelConfig || (lyrics.length >= modelConfig.constraints.lyrics.min && lyrics.length <= modelConfig.constraints.lyrics.max)
+  const promptValid = !modelConfig || (prompt.length >= modelConfig.constraints.prompt.min && prompt.length <= modelConfig.constraints.prompt.max)
   const canGenerate = lyrics.trim() && lyricsValid && promptValid
+  const songCost = modelConfig?.cost ?? 10
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
@@ -298,7 +303,7 @@ function Studio() {
                 <div className="flex flex-col gap-4 pt-2">
                   <button
                     onClick={generateLyricsFromIdea}
-                    disabled={!songIdea.trim() || isGeneratingLyrics || credits < 1}
+                    disabled={!songIdea.trim() || isGeneratingLyrics || credits < songCost}
                     className="w-full py-4 bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:shadow-none"
                   >
                     {isGeneratingLyrics ? (
@@ -306,10 +311,10 @@ function Studio() {
                         <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                         Writing Your Song...
                       </span>
-                    ) : credits < 1 ? (
+                    ) : credits < songCost ? (
                       'No Credits - Subscribe to Generate'
                     ) : (
-                      'Write My Lyrics ✍️'
+                      `Write My Lyrics ✍️ (${songCost} credits)`
                     )}
                   </button>
 
@@ -328,7 +333,7 @@ function Studio() {
                 )}
 
                 <p className="text-center text-sm text-zinc-500 dark:text-zinc-500">
-                  {credits} credits remaining
+                  {credits} credits remaining (~{Math.floor(credits / songCost)} songs)
                 </p>
               </div>
             </div>
@@ -380,14 +385,14 @@ function Studio() {
                     disabled={isGenerating}
                     className="w-full h-48 px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
                   />
-                  {constraints && (
+                  {modelConfig && (
                     <div className="flex justify-between mt-2">
                       <p className={`text-sm ${lyricsValid ? 'text-zinc-500 dark:text-zinc-500' : 'text-red-500'}`}>
-                        {lyrics.length} / {constraints.lyrics.max} characters
+                        {lyrics.length} / {modelConfig.constraints.lyrics.max} characters
                       </p>
-                      {lyrics.length < constraints.lyrics.min && (
+                      {lyrics.length < modelConfig.constraints.lyrics.min && (
                         <p className="text-sm text-red-500">
-                          Minimum {constraints.lyrics.min} characters required
+                          Minimum {modelConfig.constraints.lyrics.min} characters required
                         </p>
                       )}
                     </div>
@@ -410,14 +415,14 @@ function Studio() {
                     disabled={isGenerating}
                     className="w-full h-20 px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
                   />
-                  {constraints && (
+                  {modelConfig && (
                     <div className="flex justify-between mt-2">
                       <p className={`text-sm ${promptValid ? 'text-zinc-500 dark:text-zinc-500' : 'text-red-500'}`}>
-                        {prompt.length} / {constraints.prompt.max} characters
+                        {prompt.length} / {modelConfig.constraints.prompt.max} characters
                       </p>
-                      {prompt.length < constraints.prompt.min && (
+                      {prompt.length < modelConfig.constraints.prompt.min && (
                         <p className="text-sm text-red-500">
-                          Minimum {constraints.prompt.min} characters required
+                          Minimum {modelConfig.constraints.prompt.min} characters required
                         </p>
                       )}
                     </div>
@@ -439,7 +444,7 @@ function Studio() {
               <div className="flex flex-col items-center gap-4">
                 <button
                   onClick={handleGenerate}
-                  disabled={isGenerating || credits < 1 || !canGenerate}
+                  disabled={isGenerating || credits < songCost || !canGenerate}
                   className="w-full max-w-md py-4 bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all disabled:shadow-none"
                 >
                   {isGenerating ? (
@@ -447,15 +452,15 @@ function Studio() {
                       <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                       {generationStatus === 'pending' ? 'Waiting for AI...' : 'Crafting Your Track...'}
                     </span>
-                  ) : credits < 1 ? (
+                  ) : credits < songCost ? (
                       'No Credits - Subscribe to Generate'
                     ) : (
-                      'Make It Sing ✨'
+                      `Make It Sing ✨ (${songCost} credits)`
                     )}
                 </button>
 
                 <p className="text-sm text-zinc-500 dark:text-zinc-500">
-                  {credits} credits remaining
+                  {credits} credits remaining (~{Math.floor(credits / songCost)} songs)
                 </p>
               </div>
 

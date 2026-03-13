@@ -116,9 +116,9 @@ app.post('/polar', async (c) => {
         try {
           db.prepare(`
             INSERT INTO users (clerkUserId, credits, polarSubscriptionId, status, currentPeriodStart, currentPeriodEnd, cancelAtPeriodEnd)
-            VALUES (?, 100, ?, ?, ?, ?, 0)
+            VALUES (?, 600, ?, ?, ?, ?, 0)
             ON CONFLICT(clerkUserId) DO UPDATE SET
-              credits = 100,
+              credits = MIN(1200, credits + 600),
               polarSubscriptionId = excluded.polarSubscriptionId,
               status = excluded.status,
               currentPeriodStart = excluded.currentPeriodStart,

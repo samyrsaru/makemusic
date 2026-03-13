@@ -135,9 +135,10 @@ async function syncSubscription(subscription: any, clerkUserId: string): Promise
   
   switch (subscription.status) {
     case 'active':
-      // Reset credits to 100 for new active subscription or renewal
+      // Add 600 credits for new active subscription or renewal, with rollover cap at 1200
       if (!existingUser || existingUser.currentPeriodEnd !== subscription.currentPeriodEnd) {
-        credits = 100
+        const currentCredits = existingUser?.credits || 0
+        credits = Math.min(1200, currentCredits + 600)
       }
       break
       

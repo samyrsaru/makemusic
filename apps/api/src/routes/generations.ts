@@ -10,9 +10,10 @@ const replicate = new Replicate({
 
 const app = new Hono()
 
-// Model configuration - centralized constraints
+// Model configuration - centralized constraints and pricing
 const MODEL_CONFIG = {
   id: 'minimax/music-1.5',
+  cost: 10, // Credits per song generation
   constraints: {
     lyrics: {
       min: 10,
@@ -72,18 +73,23 @@ app.post('/generate', async (c) => {
   const user = db.prepare('SELECT credits, lifetime_credits FROM users WHERE clerkUserId = ?')
     .get(auth.userId) as any
 
+  const songCost = MODEL_CONFIG.cost
   const totalCredits = (user?.credits || 0) + (user?.lifetime_credits || 0)
-  if (!user || totalCredits < 1) {
+  if (!user || totalCredits < songCost) {
     return c.json({ error: 'Insufficient credits' }, 402)
   }
 
   // Deduct from subscription credits first, then lifetime credits
-  if (user.credits > 0) {
-    db.prepare('UPDATE users SET credits = credits - 1 WHERE clerkUserId = ?')
-      .run(auth.userId)
-  } else {
-    db.prepare('UPDATE users SET lifetime_credits = lifetime_credits - 1 WHERE clerkUserId = ?')
-      .run(auth.userId)
+  const subscriptionDeduction = Math.min(user.credits, songCost)
+  const lifetimeDeduction = songCost - subscriptionDeduction
+
+  if (subscriptionDeduction > 0) {
+    db.prepare('UPDATE users SET credits = credits - ? WHERE clerkUserId = ?')
+      .run(subscriptionDeduction, auth.userId)
+  }
+  if (lifetimeDeduction > 0) {
+    db.prepare('UPDATE users SET lifetime_credits = lifetime_credits - ? WHERE clerkUserId = ?')
+      .run(lifetimeDeduction, auth.userId)
   }
 
   const generationId = crypto.randomUUID()
@@ -130,7 +136,7 @@ app.post('/generate', async (c) => {
     console.log(`⏳ [PENDING] Prediction ${prediction.id} started, waiting for webhook...`)
 
     // Calculate remaining credits
-    const creditsRemaining = totalCredits - 1
+    const creditsRemaining = totalCredits - songCost
 
     // Return immediately with pending status
     return c.json({
@@ -145,8 +151,8 @@ app.post('/generate', async (c) => {
     console.error(`❌ [FAILED] Failed to start generation:`, error.message)
     
     // Refund credits on failure to start (refund to lifetime_credits pool)
-    db.prepare('UPDATE users SET lifetime_credits = lifetime_credits + 1 WHERE clerkUserId = ?')
-      .run(auth.userId)
+    db.prepare('UPDATE users SET lifetime_credits = lifetime_credits + ? WHERE clerkUserId = ?')
+      .run(songCost, auth.userId)
     
     // Clean up pending generation if it was created
     db.prepare('DELETE FROM generations WHERE id = ?').run(generationId)
@@ -272,8 +278,8 @@ app.post('/generate/webhook', async (c) => {
     `).run(generation.id)
     
     // Refund credits to lifetime_credits pool
-    db.prepare('UPDATE users SET lifetime_credits = lifetime_credits + 1 WHERE clerkUserId = ?')
-      .run(generation.clerkUserId)
+    db.prepare('UPDATE users SET lifetime_credits = lifetime_credits + ? WHERE clerkUserId = ?')
+      .run(MODEL_CONFIG.cost, generation.clerkUserId)
     
     console.log(`💰 [WEBHOOK] Credits refunded to lifetime pool for user: ${generation.clerkUserId.substring(0, 8)}...`)
   }

@@ -153,10 +153,10 @@ app.post('/sync', async (c) => {
     // Update or create user with credits and email
     db.prepare(`
       INSERT INTO users (clerkUserId, email, credits, polarSubscriptionId, status, currentPeriodStart, currentPeriodEnd)
-      VALUES (?, ?, 100, ?, ?, ?, ?)
+      VALUES (?, ?, 600, ?, ?, ?, ?)
       ON CONFLICT(clerkUserId) DO UPDATE SET
         email = excluded.email,
-        credits = CASE WHEN excluded.status = 'active' AND users.status != 'active' THEN 100 ELSE users.credits END,
+        credits = CASE WHEN excluded.status = 'active' AND users.status != 'active' THEN 600 ELSE MIN(1200, credits + 600) END,
         polarSubscriptionId = excluded.polarSubscriptionId,
         status = excluded.status,
         currentPeriodStart = excluded.currentPeriodStart,
@@ -170,10 +170,10 @@ app.post('/sync', async (c) => {
       activeSub.currentPeriodEnd
     )
 
-    return c.json({ 
-      success: true, 
+    return c.json({
+      success: true,
       message: 'Credits synced',
-      credits: 100 
+      credits: 600
     })
   } catch (error: any) {
     console.error('Sync error:', error)
@@ -244,7 +244,7 @@ app.post('/test-add-credits', async (c) => {
   }
 
   try {
-    const { clerkUserId, credits = 100 } = await c.req.json()
+    const { clerkUserId, credits = 600 } = await c.req.json()
     
     if (!clerkUserId) {
       return c.json({ error: 'clerkUserId required' }, 400)

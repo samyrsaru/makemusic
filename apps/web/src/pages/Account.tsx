@@ -179,7 +179,8 @@ function Account() {
                   )}
                   {status?.currentPeriodEnd && (
                     <p className="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
-                      Subscription credits reset on {formatDate(status.currentPeriodEnd)}
+                      Subscription credits reset on {formatDate(status.currentPeriodEnd)}. 
+                      Unused credits roll over (max 1200 total).
                     </p>
                   )}
                 </div>
@@ -193,7 +194,7 @@ function Account() {
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${status.cancelAtPeriodEnd ? 'bg-yellow-500' : 'bg-green-500'}`}></span>
                         <span className="font-medium">
-                          Pro Plan - {status.cancelAtPeriodEnd ? 'Cancels Soon' : 'Active'}
+                          Basic Plan - {status.cancelAtPeriodEnd ? 'Cancels Soon' : 'Active'}
                         </span>
                       </div>
                       <p className="text-zinc-600 dark:text-zinc-400">
@@ -218,14 +219,14 @@ function Account() {
                         <span className="font-medium">Free Plan</span>
                       </div>
                       <p className="text-zinc-600 dark:text-zinc-400">
-                        Upgrade to Pro to get 100 credits per month.
+                        Upgrade to Basic for $5/month and get 600 credits (up to 60 songs).
                       </p>
                       <button
                         onClick={startCheckout}
                         disabled={startingCheckout}
                         className="py-2.5 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-all disabled:opacity-50"
                       >
-                        {startingCheckout ? 'Redirecting...' : 'Upgrade to Pro'}
+                        {startingCheckout ? 'Redirecting...' : 'Upgrade to Basic'}
                       </button>
                     </div>
                   )}

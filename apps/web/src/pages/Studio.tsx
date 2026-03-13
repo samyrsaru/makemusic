@@ -1,32 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Show, useAuth } from '@clerk/react'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useSearchParams, useNavigate } from 'react-router'
 import { registerAudioElement } from '../lib/audioManager.ts'
 import { useApi } from '../hooks/useApi'
-
-const EXAMPLE_LYRICS = `[Verse]
-In the hush of night, we find our space,
-Wrapped in moonlight's gentle embrace.
-Your whisper's soft, like a velvet song,
-In this tender moment, where we both belong.
-
-[Chorus]
-Just you and me, in this lazy jazz,
-Our souls entwined, nothing else we ask.
-In this serenade, we sway and sigh,
-Lost in this love, beneath the starry sky.
-
-[Bridge]
-Your voice, a lullaby, soothes my soul,
-In this night, together, we feel whole.
-Each moment shared, a timeless flight,
-In this gentle jazz, we find our light.
-
-[Outro]
-As dawn approaches, and stars fade away,
-In your arms, I wish to forever stay.`
-
-const EXAMPLE_PROMPT = "Jazz, Smooth Jazz, Romantic, Dreamy"
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
@@ -45,8 +21,8 @@ function Studio() {
   const [searchParams] = useSearchParams()
   const [step, setStep] = useState<'input' | 'lyrics' | 'generating'>('input')
   const [songIdea, setSongIdea] = useState('')
-  const [lyrics, setLyrics] = useState(EXAMPLE_LYRICS)
-  const [prompt, setPrompt] = useState(EXAMPLE_PROMPT)
+  const [lyrics, setLyrics] = useState('')
+  const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isGeneratingLyrics, setIsGeneratingLyrics] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
@@ -55,6 +31,7 @@ function Studio() {
   const [modelConfig, setModelConfig] = useState<ModelConfig | null>(null)
   const [generationId, setGenerationId] = useState<string | null>(null)
   const [generationStatus, setGenerationStatus] = useState<'idle' | 'pending' | 'completed' | 'failed'>('idle')
+  const navigate = useNavigate()
 
   // Check for pre-filled lyrics and style from URL params
   useEffect(() => {
@@ -232,6 +209,8 @@ function Studio() {
       } else {
         setGenerationId(data.generationId)
         setCredits(data.creditsRemaining)
+        // Navigate to song page to view status
+        navigate(`/song/${data.generationId}`)
         // Start polling for status
         pollGenerationStatus(data.generationId)
       }
@@ -366,9 +345,20 @@ function Studio() {
                     <label htmlFor="lyrics" className="block font-semibold text-lg">
                       Lyrics
                     </label>
-                    <span className="text-sm text-zinc-500 dark:text-zinc-500">
-                      Edit as needed
-                    </span>
+                    <div className="flex items-center gap-3">
+                      {lyrics && (
+                        <button
+                          onClick={() => setLyrics('')}
+                          disabled={isGenerating}
+                          className="text-sm text-zinc-500 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Clear
+                        </button>
+                      )}
+                      <span className="text-sm text-zinc-500 dark:text-zinc-500">
+                        Edit as needed
+                      </span>
+                    </div>
                   </div>
 
                   <textarea
@@ -377,7 +367,7 @@ function Studio() {
                     onChange={(e) => setLyrics(e.target.value)}
                     placeholder="Enter your lyrics here..."
                     disabled={isGenerating}
-                    className="w-full h-48 px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
+                    className="w-full h-64 px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
                   />
                   {modelConfig && (
                     <div className="flex justify-between mt-2">
@@ -398,16 +388,27 @@ function Studio() {
 
                 {/* Style */}
                 <div>
-                  <label htmlFor="prompt" className="block font-semibold text-lg mb-4">
-                    Style
-                  </label>
+                  <div className="flex justify-between items-center mb-4">
+                    <label htmlFor="prompt" className="block font-semibold text-lg">
+                      Style
+                    </label>
+                    {prompt && (
+                      <button
+                        onClick={() => setPrompt('')}
+                        disabled={isGenerating}
+                        className="text-sm text-zinc-500 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
                   <textarea
                     id="prompt"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe the style, mood, instruments..."
                     disabled={isGenerating}
-                    className="w-full h-20 px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
+                    className="w-full h-28 px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none disabled:opacity-50 transition-all"
                   />
                   {modelConfig && (
                     <div className="flex justify-between mt-2">
@@ -449,9 +450,15 @@ function Studio() {
                   ) : credits < songCost ? (
                       'No Credits - Subscribe to Generate'
                     ) : (
-                      `Make It Sing ✨ (${songCost} credits)`
+                      'Make It Sing ✨'
                     )}
                 </button>
+
+                {credits >= songCost && (
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Each song costs {songCost} credits
+                  </p>
+                )}
 
                 <p className="text-xs text-zinc-400 dark:text-zinc-600">
                   {credits} credits remaining
@@ -471,6 +478,7 @@ function Studio() {
                     <div>
                       <h3 className="font-semibold text-lg">Creating your music...</h3>
                       <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">This usually takes 1-2 minutes</p>
+                      <p className="text-sm text-green-500 mt-2">Navigating to song page...</p>
                     </div>
                     <div className="flex gap-1 mt-2">
                       <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>

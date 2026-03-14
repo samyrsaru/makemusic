@@ -602,7 +602,10 @@ function Studio() {
                       <button
                         onClick={async () => {
                           try {
-                            const response = await fetch(audioUrl)
+                            // Use the server endpoint for mobile compatibility
+                            const response = await fetchWithAuth(`${API_URL}/generations/${generationId}/download`)
+                            if (!response.ok) throw new Error('Download failed')
+                            
                             const blob = await response.blob()
                             const blobUrl = window.URL.createObjectURL(blob)
                             const link = document.createElement('a')
@@ -614,6 +617,7 @@ function Studio() {
                             window.URL.revokeObjectURL(blobUrl)
                           } catch (err) {
                             console.error('Download failed:', err)
+                            // Fallback: open in new tab
                             window.open(audioUrl, '_blank')
                           }
                         }}

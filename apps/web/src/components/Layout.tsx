@@ -106,14 +106,17 @@ export function Layout({ children }: { children?: ReactNode }) {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors">
       <Header />
       {children ?? <Outlet />}
-      <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-500 space-y-2">
+      <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-500 space-y-1">
         <div>
           <Link to="/privacy" className="hover:text-green-500 dark:hover:text-green-400 transition-colors">
             Privacy Policy
           </Link>
         </div>
         <div className="text-xs opacity-75">
-          Music generated using AI technology · A <a href="https://lerimas.com" target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition-colors">lerimas.com</a> app
+          Music generated using AI technology
+        </div>
+        <div className="text-xs opacity-75">
+          A <a href="https://lerimas.com" target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition-colors">lerimas.com</a> app
         </div>
       </footer>
     </div>

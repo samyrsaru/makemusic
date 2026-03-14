@@ -56,6 +56,8 @@ function Song() {
       if (data.error) {
         setError(data.error)
       } else {
+        console.log('Generation data:', data)
+        console.log('Name:', data.name, 'Prompt:', data.prompt)
         setGeneration(data)
       }
     } catch (err) {

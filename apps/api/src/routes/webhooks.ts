@@ -268,13 +268,13 @@ app.post('/polar', async (c) => {
           return c.json({ error: 'Missing subscription ID' }, 400)
         }
         
-        const result = db.prepare(`UPDATE users SET status = 'revoked' 
+        const result = db.prepare(`UPDATE users SET status = 'canceled' 
                     WHERE polarSubscriptionId = ?`).run(String(sub.id))
         
         if (result.changes === 0) {
           console.warn(`  ⚠️  No user found with subscription ID: ${sub.id}`)
         } else {
-          console.log(`  🗑️  Subscription revoked: ${sub.id}`)
+          console.log(`  🗑️  Subscription revoked/canceled: ${sub.id}`)
         }
         break
       }

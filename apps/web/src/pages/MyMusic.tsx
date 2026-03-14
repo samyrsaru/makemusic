@@ -75,14 +75,22 @@ function MyMusic() {
     }
   }
 
-  const downloadAudio = (url: string, filename: string) => {
-    const safeName = filename.replace(/[^a-zA-Z0-9\-_\s]/g, '').trim() || 'makemusic'
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${safeName}.mp3`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const downloadAudio = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url, { mode: 'cors' })
+      if (!response.ok) throw new Error('Fetch failed')
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(blobUrl)
+    } catch (err) {
+      console.error('Download failed:', err)
+    }
   }
 
   const formatDate = (dateStr: string) => {

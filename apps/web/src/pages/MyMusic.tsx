@@ -80,7 +80,6 @@ function MyMusic() {
     const link = document.createElement('a')
     link.href = url
     link.download = `${safeName}.mp3`
-    link.target = '_blank'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

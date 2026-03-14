@@ -9,12 +9,12 @@ function NotFound() {
       <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center">
         <Show when="signed-in">
           <Link to="/studio" className="text-xl font-semibold tracking-tight">
-            <span className="text-green-500">Music</span> Hero
+            <span className="text-green-500">Sound</span>
           </Link>
         </Show>
         <Show when="signed-out">
           <Link to="/" className="text-xl font-semibold tracking-tight">
-            <span className="text-green-500">Music</span> Hero
+            <span className="text-green-500">Sound</span>
           </Link>
         </Show>
         <div className="flex items-center gap-4">

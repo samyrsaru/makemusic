@@ -12,7 +12,7 @@ export function Header() {
     <nav className="border-b border-zinc-200 dark:border-zinc-800 px-4 sm:px-6 py-4">
       <div className="flex justify-between items-center">
         <Link to={isSignedIn ? "/studio" : "/"} className="text-xl font-semibold tracking-tight">
-          <span className="text-green-500">Music</span> Hero
+          <span className="text-green-500">Sound</span>
         </Link>
 
         {/* Desktop Navigation */}

@@ -78,13 +78,27 @@ app.post('/update-email', (c) => {
   }
 
   try {
-    // Insert or update user with email
-    db.prepare(`
-      INSERT INTO users (clerkUserId, email, credits)
-      VALUES (?, ?, 0)
-      ON CONFLICT(clerkUserId) DO UPDATE SET
-        email = excluded.email
-    `).run(auth.userId, email)
+    // Check if user already exists
+    const existingUser = db.prepare('SELECT clerkUserId FROM users WHERE clerkUserId = ?').get(auth.userId)
+    
+    if (!existingUser) {
+      // New user - check if we're still giving welcome credits (first 10k users)
+      const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number }
+      const welcomeCredits = userCount.count < 10000 ? 50 : 0
+      
+      console.log(`🎁 New user signup: ${auth.userId.substring(0, 8)}... (user #${userCount.count + 1}) - Welcome credits: ${welcomeCredits}`)
+      
+      // Insert new user with welcome credits
+      db.prepare(`
+        INSERT INTO users (clerkUserId, email, credits, lifetime_credits)
+        VALUES (?, ?, 0, ?)
+      `).run(auth.userId, email, welcomeCredits)
+    } else {
+      // Existing user - just update email
+      db.prepare(`
+        UPDATE users SET email = ? WHERE clerkUserId = ?
+      `).run(email, auth.userId)
+    }
 
     return c.json({ success: true })
   } catch (error: any) {

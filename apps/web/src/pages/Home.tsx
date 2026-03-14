@@ -178,7 +178,7 @@ function Home() {
       {/* Navigation */}
       <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center sticky top-0 bg-zinc-50/80 dark:bg-zinc-950/80 backdrop-blur-sm z-50">
         <Link to="/" className="text-xl font-semibold tracking-tight">
-          <span className="text-green-500">Sound</span> like a Hero
+          <span className="text-green-500 font-bold">sound</span><span className="text-zinc-900 dark:text-zinc-100">.likeahe.ro</span>
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />
@@ -413,7 +413,7 @@ function Home() {
             <Link to="/privacy" className="hover:text-green-500 dark:hover:text-green-400 transition-colors">
               Privacy Policy
             </Link>
-            <span>© 2026 Sound like a Hero. All rights reserved.</span>
+            <span>© 2026 <span className="text-green-500 font-bold">sound</span>.likeahe.ro</span>
           </div>
           <div className="mt-2 text-xs text-zinc-400 dark:text-zinc-600">
             Music generated using AI technology

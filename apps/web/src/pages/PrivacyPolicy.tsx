@@ -7,7 +7,7 @@ function PrivacyPolicy() {
 
         <div className="prose dark:prose-invert max-w-none space-y-6">
           <p>
-            <strong>music.likeahe.ro</strong> ("we," "our," or "us") operates the music.likeahe.ro website. 
+            <strong>sound.likeahe.ro</strong> ("we," "our," or "us") operates the sound.likeahe.ro website. 
             This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website.
           </p>
 

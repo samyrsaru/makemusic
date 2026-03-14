@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://music.likeahe.ro/sitemap.xml
+Sitemap: https://sound.likeahe.ro/sitemap.xml

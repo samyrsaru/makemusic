@@ -4,7 +4,7 @@
 
 ## Deployment
 
-Deployed at [music.likeahe.ro](https://music.likeahe.ro)
+Deployed at [sound.likeahe.ro](https://sound.likeahe.ro)
 
 ### Environment Setup
 

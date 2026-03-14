@@ -178,7 +178,7 @@ function Home() {
       {/* Navigation */}
       <nav className="border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 flex justify-between items-center sticky top-0 bg-zinc-50/80 dark:bg-zinc-950/80 backdrop-blur-sm z-50">
         <Link to="/" className="text-xl font-semibold tracking-tight">
-          <span className="text-green-500">Make</span>Music
+          <span className="text-green-500">Music</span> Hero
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />
@@ -406,14 +406,14 @@ function Home() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-tight">
-              <span className="text-green-500">Make</span>Music
+              <span className="text-green-500">Music</span> Hero
             </span>
           </div>
           <div className="flex items-center gap-6 text-sm text-zinc-500 dark:text-zinc-500">
             <Link to="/privacy" className="hover:text-green-500 dark:hover:text-green-400 transition-colors">
               Privacy Policy
             </Link>
-            <span>© 2026 MakeMusic. All rights reserved.</span>
+            <span>© 2026 Music Hero. All rights reserved.</span>
           </div>
           <div className="mt-2 text-xs text-zinc-400 dark:text-zinc-600">
             Music generated using AI technology

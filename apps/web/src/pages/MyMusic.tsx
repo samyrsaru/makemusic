@@ -239,7 +239,7 @@ function MyMusic() {
                           <div className="flex gap-3">
                             <a
                               href={gen.audioUrl}
-                              download={`${gen.name || gen.prompt || 'makemusic'}.mp3`}
+                              download={`${gen.name?.trim() || gen.prompt || 'makemusic'}.mp3`}
                               onClick={(e) => {
                                 e.stopPropagation()
                               }}

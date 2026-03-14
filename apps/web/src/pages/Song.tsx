@@ -326,7 +326,7 @@ function Song() {
                   <div className="flex flex-col sm:flex-row gap-4">
                     <a
                       href={generation.audioUrl}
-                      download={`${generation.name || generation.prompt || 'makemusic'}.mp3`}
+                      download={`${generation.name?.trim() || generation.prompt || 'makemusic'}.mp3`}
                       className="flex-1 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-semibold rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all flex items-center justify-center gap-2"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

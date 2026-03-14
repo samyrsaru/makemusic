@@ -46,6 +46,23 @@ curl -X POST https://your-domain.com/api/subscription/add-lifetime-credits \
   -d '{"clerkUserId": "USER_ID", "credits": 50}'
 ```
 
+### Fixing Subscription Status
+
+If a user has `currentPeriodEnd` but `subscribed: false`, their `status` column is not 'active':
+
+**Development:**
+```bash
+sqlite3 apps/api/dev.db "UPDATE users SET status = 'active' WHERE clerkUserId = 'USER_ID'"
+```
+
+**Production:**
+```bash
+# From /opt/myapps/music/
+sqlite3 main.db "UPDATE users SET status = 'active' WHERE clerkUserId = 'USER_ID'"
+```
+
+Note: `subscribed` field checks `user.status === 'active'` in `apps/api/src/routes/subscription.ts:63`
+
 ## Key Files
 - `apps/api/src/lib/db.ts` - Database schema & migrations
 - `apps/api/.env.production` - Production secrets (never commit)

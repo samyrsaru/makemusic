@@ -156,31 +156,53 @@ function Account() {
                       <span className="text-zinc-500 dark:text-zinc-500">lifetime credits (never expire)</span>
                     </div>
                   )}
-                  {status?.currentPeriodEnd && (
-                    <p className="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
-                      Subscription credits reset on {formatDate(status.currentPeriodEnd)}. 
-                      Unused credits roll over (max 1200 total).
-                    </p>
-                  )}
+
                 </div>
 
                 {/* Subscription Section */}
                 <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm">
-                  <h2 className="text-lg font-semibold mb-4">Subscription</h2>
+                  <h2 className="text-lg font-semibold mb-6">Subscription</h2>
                   
                   {status?.subscribed ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${status.cancelAtPeriodEnd ? 'bg-yellow-500' : 'bg-green-500'}`}></span>
-                        <span className="font-medium">
-                          Basic Plan - {status.cancelAtPeriodEnd ? 'Cancels Soon' : 'Active'}
-                        </span>
+                    <div className="space-y-6">
+                      {/* Treble Plan Benefits */}
+                      <div className="p-4 border-2 border-green-500 dark:border-green-600 rounded-xl bg-green-50/50 dark:bg-green-950/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
+                          {status.cancelAtPeriodEnd ? 'CANCELS SOON' : 'CURRENT'}
+                        </div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className={`w-2 h-2 rounded-full ${status.cancelAtPeriodEnd ? 'bg-yellow-500' : 'bg-green-500'} animate-pulse`}></span>
+                          <span className="font-semibold text-zinc-900 dark:text-zinc-100">Treble</span>
+                        </div>
+                        <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">$5</p>
+                        <p className="text-sm text-zinc-500 mb-4">per month</p>
+                        <ul className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
+                          <li className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            600 credits/month
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            Rollover credits (max 600)
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            Cancel anytime
+                          </li>
+                        </ul>
                       </div>
+                      
                       <p className="text-zinc-600 dark:text-zinc-400">
                         {status.cancelAtPeriodEnd ? (
                           <>Your subscription will cancel on {formatDate(status.currentPeriodEnd!)}. You can still use your credits until then.</>
                         ) : (
-                          <>You have unlimited access to generate music.</>
+                          <>Your subscription renews on {formatDate(status.currentPeriodEnd!)}. 600 credits/month with rollover (max 1200 total balance).</>
                         )}
                       </p>
                       <button
@@ -192,21 +214,75 @@ function Account() {
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-zinc-400 rounded-full"></span>
-                        <span className="font-medium">Free Plan</span>
+                    <div className="space-y-6">
+                      {/* Plan Comparison */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {/* Free Plan */}
+                        <div className="p-4 border border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 bg-zinc-400 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
+                            CURRENT
+                          </div>
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="w-2 h-2 bg-zinc-400 rounded-full"></span>
+                            <span className="font-medium text-zinc-700 dark:text-zinc-300">Free</span>
+                          </div>
+                          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">$0</p>
+                          <p className="text-sm text-zinc-500 mb-4">forever</p>
+                          <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+                            <li className="flex items-center gap-2">
+                              <span className="text-zinc-400">-</span> 50 credits on signup
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="text-zinc-400">-</span> No monthly credits
+                            </li>
+                          </ul>
+                        </div>
+
+                        {/* Treble Plan */}
+                        <div className="p-4 border-2 border-green-500 dark:border-green-600 rounded-xl bg-green-50/50 dark:bg-green-950/10 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
+                            POPULAR
+                          </div>
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span className="font-semibold text-zinc-900 dark:text-zinc-100">Treble</span>
+                          </div>
+                          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">$5</p>
+                          <p className="text-sm text-zinc-500 mb-4">per month</p>
+                          <ul className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
+                            <li className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              600 credits/month
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Rollover credits (max 600)
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Cancel anytime
+                            </li>
+                          </ul>
+                        </div>
                       </div>
-                      <p className="text-zinc-600 dark:text-zinc-400">
-                        Upgrade to Basic for $5/month and get 600 credits (up to 60 songs).
-                      </p>
+
+                      {/* CTA Button */}
                       <button
                         onClick={startCheckout}
                         disabled={startingCheckout}
-                        className="py-2.5 px-4 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-all disabled:opacity-50"
+                        className="w-full py-3 px-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-green-500/25 hover:shadow-green-500/40"
                       >
-                        {startingCheckout ? 'Redirecting...' : 'Upgrade to Basic'}
+                        {startingCheckout ? 'Redirecting...' : 'Upgrade to Treble — $5/month'}
                       </button>
+                      <p className="text-center text-xs text-zinc-500">
+                        Secure checkout powered by Polar
+                      </p>
                     </div>
                   )}
                 </div>

@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { validateEvent, WebhookVerificationError } from '@polar-sh/sdk/webhooks.js'
 import { createClerkClient } from '@clerk/backend'
 import db from '../lib/db.js'
-import { uploadAudioToR2, downloadAudioFromUrl } from '../lib/r2.js'
+import { uploadAudioToR2, downloadAudioFromUrl, deleteAudioFromR2 } from '../lib/r2.js'
 import { isWebhookProcessed, markWebhookProcessed } from '../lib/sync.js'
 
 const app = new Hono()
@@ -342,13 +342,52 @@ app.post('/clerk', async (c) => {
         return c.json({ received: true })
       }
 
-      // Create new user with 50 free credits
+      // Create new user with 50 free lifetime credits
       db.prepare(`
         INSERT INTO users (clerkUserId, email, credits, lifetime_credits)
-        VALUES (?, ?, 50, 0)
+        VALUES (?, ?, 0, 50)
       `).run(clerkUserId, email || null)
 
-      console.log(`  ✅ Created new user ${clerkUserId} with 50 free credits`)
+      console.log(`  ✅ Created new user ${clerkUserId} with 50 free lifetime credits`)
+    }
+
+    if (eventType === 'user.deleted') {
+      const clerkUserId = eventData.id
+
+      if (!clerkUserId) {
+        console.error('  ❌ Missing user ID in webhook')
+        return c.json({ error: 'Missing user ID' }, 400)
+      }
+
+      const userGenerations = db.prepare('SELECT r2Key FROM generations WHERE clerkUserId = ? AND r2Key IS NOT NULL').all(clerkUserId) as { r2Key: string }[]
+      
+      for (const gen of userGenerations) {
+        try {
+          await deleteAudioFromR2(gen.r2Key)
+          console.log(`  🗑️  Deleted R2 file: ${gen.r2Key}`)
+        } catch (err) {
+          console.error(`  ❌ Failed to delete R2 file ${gen.r2Key}:`, err)
+        }
+      }
+
+      db.prepare('DELETE FROM generations WHERE clerkUserId = ?').run(clerkUserId)
+      db.prepare('DELETE FROM users WHERE clerkUserId = ?').run(clerkUserId)
+      console.log(`  🗑️  Deleted user and their content: ${clerkUserId}`)
+    }
+
+    if (eventType === 'user.updated') {
+      const clerkUserId = eventData.id
+      const email = eventData.email_addresses?.[0]?.email_address
+
+      if (!clerkUserId) {
+        console.error('  ❌ Missing user ID in webhook')
+        return c.json({ error: 'Missing user ID' }, 400)
+      }
+
+      if (email) {
+        db.prepare('UPDATE users SET email = ? WHERE clerkUserId = ?').run(email, clerkUserId)
+        console.log(`  📝 Updated email for user ${clerkUserId}: ${email}`)
+      }
     }
 
     return c.json({ received: true })

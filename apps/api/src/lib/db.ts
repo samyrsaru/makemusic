@@ -29,6 +29,7 @@ db.exec(`
     clerkUserId TEXT,
     lyrics TEXT,
     prompt TEXT,
+    name TEXT,
     replicateId TEXT,
     status TEXT DEFAULT 'pending',
     audioUrl TEXT,

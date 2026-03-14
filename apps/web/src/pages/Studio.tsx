@@ -32,6 +32,7 @@ function Studio() {
   const [modelConfig, setModelConfig] = useState<ModelConfig | null>(null)
   const [generationId, setGenerationId] = useState<string | null>(null)
   const [generationStatus, setGenerationStatus] = useState<'idle' | 'pending' | 'completed' | 'failed'>('idle')
+  const [skipReview, setSkipReview] = useState(false)
   const navigate = useNavigate()
 
   // Check for pre-filled lyrics and style from URL params
@@ -100,7 +101,12 @@ function Studio() {
         if (data.style) {
           setPrompt(data.style)
         }
-        setStep('lyrics')
+        if (skipReview) {
+          // Auto-generate without showing review step - stay on generating step
+          handleAutoGenerate(data.lyrics, data.style || '')
+        } else {
+          setStep('lyrics')
+        }
       } else if (data.error) {
         setError(data.error)
         setStep('input')
@@ -158,38 +164,47 @@ function Studio() {
 
   const handleGenerate = async () => {
     if (!lyrics.trim()) return
-    
+    await generateSong(lyrics, prompt)
+  }
+
+  const handleAutoGenerate = async (autoLyrics: string, autoPrompt: string) => {
+    await generateSong(autoLyrics, autoPrompt)
+  }
+
+  const generateSong = async (songLyrics: string, songPrompt: string) => {
     setIsGenerating(true)
     setError('')
     setAudioUrl(null)
     setGenerationStatus('pending')
-    
+
     try {
       const res = await fetchWithAuth(`${API_URL}/api/generations/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          lyrics,
-          prompt
+          lyrics: songLyrics,
+          prompt: songPrompt
         })
       })
-      
+
       if (!res.ok) {
         if (res.status === 401) {
           setError('Session expired. Please sign in again.')
           setIsGenerating(false)
           setGenerationStatus('idle')
+          setStep('input')
           return
         }
         throw new Error(`HTTP ${res.status}`)
       }
-      
+
       const data = await res.json()
-      
+
       if (data.error) {
         setError(data.error)
         setIsGenerating(false)
         setGenerationStatus('idle')
+        setStep('input')
       } else {
         setGenerationId(data.generationId)
         fetchStatus()
@@ -202,6 +217,7 @@ function Studio() {
       setError('Failed to start generation')
       setIsGenerating(false)
       setGenerationStatus('idle')
+      setStep('input')
     }
   }
 
@@ -275,9 +291,21 @@ function Studio() {
                         Writing Your Song...
                       </span>
                     ) : (
-                      'Write My Lyrics ✍️'
+                      skipReview ? 'Surprise Me' : 'Write My Lyrics ✍️'
                     )}
                   </button>
+
+                  <div className="flex items-center justify-center gap-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={skipReview}
+                        onChange={(e) => setSkipReview(e.target.checked)}
+                        className="w-4 h-4 rounded border-zinc-300 text-green-500 focus:ring-green-500"
+                      />
+                      <span className="text-sm text-zinc-600 dark:text-zinc-400">Skip review & generate directly</span>
+                    </label>
+                  </div>
 
                   <button
                     onClick={goToLyricsDirectly}

@@ -237,23 +237,16 @@ function MyMusic() {
                           />
 
                           <div className="flex gap-3">
-                            <button
+                            <a
+                              href={gen.audioUrl}
+                              download={`${gen.name?.trim() || gen.prompt || 'makemusic'}.mp3`}
                               onClick={(e) => {
-                                e.preventDefault()
                                 e.stopPropagation()
-                                const filename = `${gen.name?.trim() || gen.prompt || 'makemusic'}.mp3`
-                                const link = document.createElement('a')
-                                link.href = gen.audioUrl
-                                link.download = filename
-                                link.style.display = 'none'
-                                document.body.appendChild(link)
-                                link.click()
-                                document.body.removeChild(link)
                               }}
-                              className="w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all"
+                              className="w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-medium rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all text-center"
                             >
                               Download
-                            </button>
+                            </a>
                           </div>
                         </>
                       )}

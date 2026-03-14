@@ -240,6 +240,8 @@ function MyMusic() {
                             <a
                               href={gen.audioUrl}
                               download={`${gen.name?.trim() || gen.prompt || 'makemusic'}.mp3`}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               onClick={(e) => {
                                 e.stopPropagation()
                               }}

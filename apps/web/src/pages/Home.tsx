@@ -13,6 +13,14 @@ function Home() {
     }
   }, [isLoaded, userId, navigate])
 
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-green-500 border-t-transparent"></div>
+      </div>
+    )
+  }
+
   const features = [
     {
       icon: '🎵',

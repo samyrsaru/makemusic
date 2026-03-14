@@ -44,7 +44,7 @@ function Home() {
     {
       icon: '🎨',
       title: 'Multiple Styles',
-      description: 'Choose from various music genres including pop, rock, electronic, classical, jazz, and more.'
+      description: 'Try the same lyrics with different styles — pop, rock, electronic, jazz, and more. Endless variations from one idea.'
     },
     {
       icon: '⚡',
@@ -65,6 +65,11 @@ function Home() {
       icon: '🔄',
       title: 'Unlimited Remixes',
       description: 'Not satisfied? Generate variations until you find the perfect sound.'
+    },
+    {
+      icon: '🎬',
+      title: 'Perfect for Content Creators',
+      description: 'Create original background music for your YouTube vlogs, podcasts, TikToks, and videos — no copyright strikes, ever.'
     }
   ]
 

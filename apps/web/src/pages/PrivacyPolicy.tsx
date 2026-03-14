@@ -68,6 +68,16 @@ function PrivacyPolicy() {
           </section>
 
           <section>
+            <h2 className="text-xl font-semibold mb-3">AI Content Generation</h2>
+            <p>
+              Our music generation service is powered by third-party AI models. When you use our service, 
+              your text prompts are sent to these AI providers for processing. We do not operate the AI models ourselves. 
+              The generated music and lyrics are created by these third-party AI systems, and the terms and policies 
+              of those providers apply to the generated content.
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-xl font-semibold mb-3">Data Security</h2>
             <p>
               We implement appropriate technical and organizational measures to protect your personal information 

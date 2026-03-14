@@ -413,7 +413,7 @@ function Home() {
             © 2026 <span className="text-green-500 font-bold">sound</span><span className="text-zinc-900 dark:text-zinc-100">.likeahe.ro</span>. All rights reserved.
           </div>
           <div className="text-xs text-zinc-400 dark:text-zinc-600">
-            Music generated using AI technology
+            Music generated using AI technology · A <a href="https://lerimas.com" target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition-colors">lerimas.com</a> app
           </div>
         </div>
       </footer>

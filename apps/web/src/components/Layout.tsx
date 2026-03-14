@@ -113,7 +113,7 @@ export function Layout({ children }: { children?: ReactNode }) {
           </Link>
         </div>
         <div className="text-xs opacity-75">
-          Music generated using AI technology
+          Music generated using AI technology · A <a href="https://lerimas.com" target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition-colors">lerimas.com</a> app
         </div>
       </footer>
     </div>

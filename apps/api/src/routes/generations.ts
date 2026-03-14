@@ -363,7 +363,8 @@ app.get('/status/:id', async (c) => {
   let signedUrl = generation.audioUrl
   if (generation.status === 'completed' && generation.r2Key) {
     try {
-      signedUrl = await getSignedAudioUrl(generation.r2Key, 3600) // 1 hour
+      const filename = generation.name?.trim() || generation.prompt
+      signedUrl = await getSignedAudioUrl(generation.r2Key, 3600, filename) // 1 hour
     } catch (err) {
       console.error(`Failed to generate signed URL for ${id}:`, err)
       signedUrl = generation.audioUrl
@@ -575,7 +576,8 @@ app.get('/', async (c) => {
       // If we have an R2 key, generate a signed URL
       if (gen.r2Key) {
         try {
-          audioUrl = await getSignedAudioUrl(gen.r2Key, 3600) // 1 hour
+          const filename = gen.name?.trim() || gen.prompt
+          audioUrl = await getSignedAudioUrl(gen.r2Key, 3600, filename) // 1 hour
         } catch (err) {
           console.error(`Failed to generate signed URL for ${gen.id}:`, err)
           // Fall back to original URL
@@ -614,7 +616,8 @@ app.get('/:id', async (c) => {
   let audioUrl = generation.audioUrl
   if (generation.r2Key) {
     try {
-      audioUrl = await getSignedAudioUrl(generation.r2Key, 3600) // 1 hour
+      const filename = generation.name?.trim() || generation.prompt
+      audioUrl = await getSignedAudioUrl(generation.r2Key, 3600, filename) // 1 hour
     } catch (err) {
       console.error(`Failed to generate signed URL for ${id}:`, err)
       // Fall back to original URL

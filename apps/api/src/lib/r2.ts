@@ -51,16 +51,22 @@ export async function uploadAudioToR2(
 
 export async function getSignedAudioUrl(
   key: string,
-  expiresInSeconds: number = 3600
+  expiresInSeconds: number = 3600,
+  filename?: string
 ): Promise<string> {
   if (!R2_BUCKET_NAME) {
     throw new Error('R2_BUCKET_NAME not configured')
   }
 
+  // Sanitize filename for Content-Disposition header
+  const safeFilename = filename 
+    ? filename.replace(/[^\w\s-._]/g, '').trim() || 'song'
+    : 'song'
+
   const command = new GetObjectCommand({
     Bucket: R2_BUCKET_NAME,
     Key: key,
-    ResponseContentDisposition: 'attachment; filename="makemusic.mp3"',
+    ResponseContentDisposition: `attachment; filename="${safeFilename}.mp3"`,
   })
 
   const signedUrl = await getSignedUrl(r2Client, command, {
